@@ -1,0 +1,9 @@
+# 原始行情与流水，不公开
+*.csv
+*.log
+
+# 系统与编辑器
+.DS_Store
+*.swp
+.idea/
+.vscode/

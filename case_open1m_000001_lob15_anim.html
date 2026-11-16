@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>000001.SZ 开盘1分钟 · 15档订单簿（lob15）</title>
+<style>
+:root {
+  --bg:#0f1419; --panel:#1a2332; --border:#2a3544; --text:#e7ecf3; --muted:#8b9bb0;
+  --bid:#2ecc71; --bid-dim:#1e8a4c; --ask:#e74c3c; --ask-dim:#a83228;
+  --accent:#5b9fd4; --warn:#f0c14b;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"IBM Plex Sans","Segoe UI","PingFang SC","Noto Sans SC",sans-serif;background:var(--bg);color:var(--text)}
+.wrap{max-width:1480px;margin:0 auto;padding:16px 16px 36px}
+h1{font-size:17px;margin:0 0 4px;font-weight:600}
+.sub{color:var(--muted);font-size:12px;margin-bottom:14px}
+.page{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:14px;align-items:stretch}
+.main{min-width:0;display:flex;flex-direction:column}
+.main > .panel:last-child{margin-bottom:0}
+.side{min-width:0;display:flex;flex-direction:column}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:12px}
+.side > .panel.streams{
+  flex:1 1 auto;
+  margin-bottom:0;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+.meta{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px}
+.meta .k{color:var(--muted);font-size:10px;letter-spacing:.04em;text-transform:uppercase}
+.meta .v{font-size:15px;font-variant-numeric:tabular-nums;font-weight:600;margin-top:2px}
+.event-box{font-family:"IBM Plex Mono",Consolas,monospace;font-size:12px;background:#121821;border:1px solid var(--border);border-radius:8px;padding:8px 10px;min-height:40px;line-height:1.4;word-break:break-all}
+.tag{display:inline-block;font-size:10px;padding:1px 6px;border-radius:4px;margin-right:6px;font-weight:700}
+.tag-order{background:#2a4060;color:var(--accent)}
+.tag-trade{background:#3a2a18;color:var(--warn)}
+.tag-cancel{background:#333;color:var(--muted)}
+.tag-base{background:#2a2a2a;color:var(--muted)}
+.tag-hit{background:#1e5c3a;color:#8dffb5}
+.row .px.hit-match,.row .vol.hit-match{color:#3dff8a!important;font-weight:700}
+.impact{margin-top:10px;background:#121821;border:1px solid var(--border);border-radius:8px;padding:10px 12px;height:160px;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden}
+.impact h2{margin:0 0 8px;font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.03em;flex:0 0 auto}
+.impact-body{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding-right:4px}
+.impact .story{font-size:13px;line-height:1.55;margin:0 0 8px}
+.impact .story li{margin:0 0 4px}
+.impact .deltas{font-family:"IBM Plex Mono",Consolas,monospace;font-size:11.5px;line-height:1.5;color:#c5d0dc}
+.impact .deltas .up{color:#3dff8a}
+.impact .deltas .dn{color:#ff8a7a}
+.impact .deltas .neu{color:var(--muted)}
+.impact .empty{color:var(--muted);font-size:12px}
+.delta-panel{height:560px;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden}
+.delta-panel h2{margin:0 0 8px;font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.03em;flex:0 0 auto}
+#deltaBox{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;font-family:"IBM Plex Mono",Consolas,monospace;font-size:11.5px;line-height:1.5;color:#c5d0dc;padding-right:4px}
+#deltaBox .up{color:#3dff8a}
+#deltaBox .dn{color:#ff8a7a}
+#deltaBox .neu{color:var(--muted)}
+.layout{display:grid;grid-template-columns:1.05fr 0.95fr;gap:12px}
+@media(max-width:1200px){.page{grid-template-columns:1fr}.side{position:static}}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.delta-panel{height:320px}}
+.ladder{display:flex;flex-direction:column;gap:2px;font-variant-numeric:tabular-nums;font-size:11.5px}
+.row{display:grid;grid-template-columns:54px 70px 1fr 88px;gap:6px;align-items:center}
+.row.ask .px{color:var(--ask);font-weight:600;text-align:right}
+.row.bid .px{color:var(--bid);font-weight:600;text-align:right}
+.row .lab{color:var(--muted);font-size:10px}
+.row .vol{color:var(--muted);text-align:right;font-size:11px}
+.row.changed{outline:1px solid rgba(91,159,212,.35);border-radius:4px;background:rgba(91,159,212,.06)}
+.bar-track{height:14px;background:#121821;border-radius:3px;overflow:hidden}
+.bar{height:100%;border-radius:3px;transition:width 60ms linear}
+.bar.ask{background:var(--ask-dim)}
+.bar.bid{background:var(--bid-dim)}
+.bar.flash-up{background:#3dff8a!important}
+.bar.flash-dn{background:#ff6b5b!important}
+.midline{display:flex;justify-content:space-between;align-items:center;padding:6px 4px;margin:4px 0;border-top:1px dashed var(--border);border-bottom:1px dashed var(--border);color:var(--muted);font-size:11px}
+.midline strong{color:var(--text);font-size:13px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button,select{background:#243044;color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:#0b1520;border-color:var(--accent);font-weight:600}
+button.hitbtn{background:#4a3a8a;border-color:#7c5cff}
+button:disabled{opacity:.4;cursor:default}
+input[type=range]{flex:1;min-width:140px;accent-color:var(--accent)}
+.prog{color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums;min-width:150px}
+.hint{color:var(--muted);font-size:11px;margin-top:8px;line-height:1.45}
+.stats{color:var(--muted);font-size:11px;margin-top:6px}
+.rules{font-size:12px;line-height:1.55;color:#c5d0dc}
+.rules h2{margin:0 0 8px;font-size:13px;color:var(--accent);font-weight:600}
+.rules ol{margin:0;padding-left:18px}
+.rules li{margin:0 0 6px}
+.rules li strong{color:var(--text)}
+.rules code{font-family:"IBM Plex Mono",Consolas,monospace;font-size:11px;background:#121821;padding:1px 5px;border-radius:3px;color:var(--warn)}
+.rules .note{margin:8px 0 0;color:var(--muted);font-size:11px}
+.streams h2{margin:0 0 6px;font-size:13px;color:var(--accent);font-weight:600;flex:0 0 auto}
+.streams .stream-hint{color:var(--muted);font-size:11px;margin:0 0 10px;line-height:1.4;flex:0 0 auto}
+.stream-block{margin-bottom:10px;flex:1 1 0;display:flex;flex-direction:column;min-height:0}
+.stream-block:last-child{margin-bottom:0}
+.stream-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;flex:0 0 auto}
+.stream-head .name{font-size:11px;font-weight:700;letter-spacing:.03em}
+.stream-head .cnt{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums}
+.stream-head .name.o{color:var(--accent)}
+.stream-head .name.t{color:var(--warn)}
+.stream-head .name.m{color:#9ad0a8}
+.stream-list{background:#121821;border:1px solid var(--border);border-radius:8px;flex:1 1 auto;min-height:100px;overflow-y:auto;font-family:"IBM Plex Mono",Consolas,monospace;font-size:10.5px;line-height:1.35}
+.stream-list .item{padding:3px 8px;color:#9aa8b8;border-bottom:1px solid #1a222e;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stream-list .item:hover{background:#1a2433;color:var(--text)}
+.stream-list .item.cur{background:#243a28;color:#e8ffe8;font-weight:700;border-left:3px solid #3dff8a;padding-left:5px}
+.stream-list .item .ix{color:var(--muted);margin-right:4px}
+.stream-list .item.cur .ix{color:#8dffb5}
+.stream-list .empty{padding:10px;color:var(--muted);font-size:11px}
+@media(max-width:640px){.meta{grid-template-columns:repeat(2,1fr)}.row{grid-template-columns:44px 58px 1fr 70px}}
+.topnav{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.topnav a{color:var(--accent);text-decoration:none;font-size:12px;border:1px solid var(--border);border-radius:6px;padding:5px 10px;background:#182232}
+.topnav a:hover{border-color:var(--accent)}
+.tourbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 12px}
+.tourbar .lab{color:var(--muted);font-size:11px;margin-right:2px}
+.tourbar button{padding:5px 9px;font-size:11px}
+.tourbar button.on{border-color:var(--accent);color:#dff0ff}
+.mob-tip{display:none;background:#243044;border:1px solid var(--border);color:var(--muted);font-size:11px;line-height:1.45;padding:8px 10px;border-radius:8px;margin-bottom:12px}
+@media(max-width:900px){.mob-tip{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav">
+    <a href="index.html">← 沪深对照首页</a>
+    <a href="case_open1m_603778_lob15_anim.html">切换沪市 603778 →</a>
+  </div>
+  <h1>000001.SZ · 开盘 1 分钟事件流 → <span style="color:#5b9fd4">15 档</span>订单簿</h1>
+  <div class="sub">20260731 · [09:30:00, 09:31:00) · 展示每条事件如何改写 15 档 · 与官方 3s 快照前 10 档一致时暂停 3 秒后继续</div>
+  <div class="mob-tip">手机建议横屏；先用「下一步」或下方导览跳到关键帧，熟悉后再点播放。</div>
+  <div class="tourbar" id="tourBar">
+    <span class="lab">导览</span>
+    <button type="button" data-step="0">#0 开盘前</button>
+    <button type="button" data-step="1">#1 改善卖一</button>
+    <button type="button" data-step="2">#2 立刻成交</button>
+    <button type="button" data-step="10">#10 市价单</button>
+    <button type="button" data-step="103">#103 撤单改卖一</button>
+    <button type="button" data-step="666">#666 命中官方</button>
+  </div>
+
+  <div class="panel rules">
+    <h2>重构订单簿通用规则</h2>
+    <ol>
+      <li><strong>R1 排序</strong>：Order + Transaction 合并后按 <code>(时间秒, 时间毫秒, seq)</code> 回放；同毫秒用 OrderID / TradeID 比大小（更小的先），不按事件类型优先。</li>
+      <li><strong>R2 簿结构</strong>：每侧维护 <code>levels: 价→量</code> 与 <code>orders: oid→(价,剩余量)</code>。</li>
+      <li><strong>R3 三类更新</strong>：新委托入簿加量；成交/撤单按 OrderID 扣量（量≤0 删档）。深市撤单在 Transaction(<code>C</code>)，沪市撤单在 Order(<code>C</code>)。</li>
+      <li><strong>R4 每事件一帧</strong>：判阶段 → 改簿 → 刷新盘口 → 输出快照；重建行数 ≈ 事件数。</li>
+      <li><strong>R5 盘口算法</strong>：集合竞价用虚拟撮合（最大成交量→最小买卖差→贴近参考价）；连续竞价取真实簿 Top-N（本页为 15 档）。</li>
+      <li><strong>R6 沪深扣减</strong>：深市成交同时扣买卖双方 OrderID；沪市连续竞价按主动方向主要扣对手方（对手尚未入簿则缓存）。</li>
+      <li><strong>R7 验证</strong>：与官方 Tick 不做 nTime 逐行对齐；前 10 档价量曾出现在重建集合即命中（本页命中时前 10 档数字标绿，播放中暂停 3 秒后继续）。</li>
+    </ol>
+    <p class="note">本样本为深圳 000001：成交双边扣减 + Transaction 撤单确认。下方动画按上述规则逐步回放开盘 1 分钟。</p>
+  </div>
+
+  <div class="page">
+  <div class="main">
+  <div class="panel">
+    <div class="meta">
+      <div><div class="k"># / Time</div><div class="v" id="mIdx">—</div></div>
+      <div><div class="k">Last</div><div class="v" id="mLast">—</div></div>
+      <div><div class="k">TotVol</div><div class="v" id="mVol">—</div></div>
+      <div><div class="k">Spread</div><div class="v" id="mSpr">—</div></div>
+      <div><div class="k">官方命中</div><div class="v" id="mHit">—</div></div>
+    </div>
+    <div class="event-box" id="eventBox">加载数据中…</div>
+    <div class="impact" id="impactBox">
+      <h2>事件对订单簿的影响</h2>
+      <div class="impact-body" id="impactBody"><div class="empty">—</div></div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="panel">
+      <div class="ladder" id="ladder"></div>
+    </div>
+    <div class="panel">
+      <div class="delta-panel">
+        <h2>15 档差分明细（相对上一事件）</h2>
+        <div id="deltaBox">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="controls">
+      <button id="btnPlay" class="primary">播放</button>
+      <button id="btnPrev">上一步</button>
+      <button id="btnNext">下一步</button>
+      <button id="btnNextHit" class="hitbtn">下一命中</button>
+      <button id="btnReset">重置</button>
+      <label style="color:var(--muted);font-size:12px">速度
+        <select id="speed">
+          <option value="1">1×</option>
+          <option value="2">2×</option>
+          <option value="5" selected>5×</option>
+          <option value="10">10×</option>
+          <option value="20">20×</option>
+          <option value="50">50×</option>
+          <option value="100">100×</option>
+        </select>
+      </label>
+      <input type="range" id="slider" min="0" max="0" value="0" />
+      <span class="prog" id="prog">0 / 0</span>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div class="hint">快捷键：空格 播放/暂停 · ←/→ 单步 · N 下一官方命中 · Home 重置。量条高亮=本步增减；命中官方时前 10 档标绿并<strong>暂停 3 秒</strong>后自动继续。右侧可点击事件跳转。</div>
+  </div>
+  </div><!-- /.main -->
+
+  <aside class="side">
+    <div class="panel streams">
+      <h2>事件数据来源</h2>
+      <p class="stream-hint">各列表以当前切片为中心滚动显示约 20 笔；当前行加粗标绿。合并流 = Order ∪ Transaction（按时间+seq）。</p>
+      <div class="stream-block">
+        <div class="stream-head"><span class="name o">ORDER</span><span class="cnt" id="cntOrder">—</span></div>
+        <div class="stream-list" id="listOrder"></div>
+      </div>
+      <div class="stream-block">
+        <div class="stream-head"><span class="name t">TRANSACTION</span><span class="cnt" id="cntTrade">—</span></div>
+        <div class="stream-list" id="listTrade"></div>
+      </div>
+      <div class="stream-block">
+        <div class="stream-head"><span class="name m">MERGED</span><span class="cnt" id="cntMerged">—</span></div>
+        <div class="stream-list" id="listMerged"></div>
+      </div>
+    </div>
+  </aside>
+  </div><!-- /.page -->
+</div>
+<script src="case_open1m_000001_lob15_data.js"></script>
+<script>
+(function(){
+const D = window.LOB_DATA;
+if(!D){ document.getElementById('eventBox').textContent='数据文件未加载：请与 HTML 同目录打开，并确保能加载数据 JS。'; return; }
+// 以实际盘口数组长度为准，避免浏览器缓存旧 data.js 导致仍显示 10 档
+const DEPTH = (D.base && D.base.askp && D.base.askp.length)
+  ? D.base.askp.length
+  : ((D.meta && D.meta.depth) ? D.meta.depth : 15);
+const VERIFY_DEPTH = (D.meta && D.meta.verifyDepth) ? D.meta.verifyDepth : 10;
+if (DEPTH !== 15) {
+  document.body.insertAdjacentHTML('afterbegin',
+    '<div style="background:#a83228;color:#fff;padding:12px;font-size:14px;font-weight:700">'
+    + '错误：数据不是 15 档（DEPTH=' + DEPTH + '）。请打开 case_open1m_000001_lob15_anim.html，不要打开旧 HTML。'
+    + '</div>');
+}
+
+function px(p){ return (!p && p!==0) ? '—' : (p/10000).toFixed(2); }
+function fv(v){ return (v||0).toLocaleString('en-US'); }
+function signed(n){ return (n>0?'+':'') + fv(n); }
+function tstr(n){
+  const hh=Math.floor(n/10000000), mm=Math.floor(n/100000)%100, ss=Math.floor(n/1000)%100, ms=n%1000;
+  return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0')+'.'+String(ms).padStart(3,'0');
+}
+function fmtEvent(e){
+  const t=e[0];
+  if(t===3) return {tag:'tag-base', text:'BASELINE（连续竞价开始前 15 档）'};
+  if(t===0){
+    const d=e[1]===1?'B':(e[1]===2?'S':'?');
+    const ot={1:'市价',2:'限价',3:'本方最优'}[e[3]]||e[3];
+    return {tag:'tag-order', text:`ORDER ${d} id=${e[2]} ${ot} ${px(e[4])}×${e[5]}`};
+  }
+  if(t===2) return {tag:'tag-cancel', text:`CANCEL vol=${e[1]} askOID=${e[2]} bidOID=${e[3]}`};
+  const d=e[1]===1?'B':(e[1]===2?'S':'?');
+  return {tag:'tag-trade', text:`TRADE ${d} ${px(e[2])}×${e[3]} askOID=${e[4]} bidOID=${e[5]}`};
+}
+
+function unpackBase(b){
+  return {nTime:b.nTime,last:b.last,totVol:b.totVol,match:0,e:b.e,askp:b.askp,askv:b.askv,bidp:b.bidp,bidv:b.bidv};
+}
+function unpackRow(r){
+  return {nTime:r[0],last:r[1],totVol:r[2],match:r[3],e:r[4],askp:r[5],askv:r[6],bidp:r[7],bidv:r[8]};
+}
+
+const frames=[unpackBase(D.base)].concat(D.rows.map(unpackRow));
+const hitIdx=[];
+for(let i=0;i<frames.length;i++) if(frames[i].match) hitIdx.push(i);
+
+// 从合并帧拆出 Order / Transaction / Merged 索引（帧号）
+const orderIdx=[], tradeIdx=[], mergedIdx=[];
+for(let i=0;i<frames.length;i++){
+  const t=frames[i].e[0];
+  if(t===3) continue; // baseline 不进三流
+  mergedIdx.push(i);
+  if(t===0) orderIdx.push(i);
+  else if(t===1 || t===2) tradeIdx.push(i);
+}
+const STREAM_WIN = 20;
+
+let idx=0, playing=false, timer=null, prevSnap=null;
+const HIT_PAUSE_MS = 3000; // 命中官方快照后停留再继续
+
+
+document.getElementById('stats').textContent =
+  `事件帧 ${D.meta.nFrames} · 【展示 15 档】实际数组=${DEPTH} · 官方比对前 ${VERIFY_DEPTH} 档 · 官方快照 ${D.meta.nOfficial}（独特 ${D.meta.nOfficialUnique}）· 命中 ${D.meta.nMatch}`
+  + ` · Order ${orderIdx.length} · Transaction ${tradeIdx.length} · Merged ${mergedIdx.length}`;
+document.getElementById('slider').max = String(frames.length-1);
+document.getElementById('cntOrder').textContent = orderIdx.length + ' 笔';
+document.getElementById('cntTrade').textContent = tradeIdx.length + ' 笔';
+document.getElementById('cntMerged').textContent = mergedIdx.length + ' 笔';
+
+function shortLine(fi){
+  const f=frames[fi], e=f.e, tm=tstr(f.nTime);
+  if(e[0]===0){
+    const d=e[1]===1?'B':(e[1]===2?'S':'?');
+    const ot={1:'M',2:'L',3:'O'}[e[3]]||e[3];
+    return `<span class="ix">#${fi}</span>${tm} ORD ${d}${ot} id=${e[2]} ${px(e[4])}×${e[5]}`;
+  }
+  if(e[0]===2){
+    return `<span class="ix">#${fi}</span>${tm} CXL vol=${e[1]} a=${e[2]} b=${e[3]}`;
+  }
+  if(e[0]===1){
+    const d=e[1]===1?'B':(e[1]===2?'S':'?');
+    return `<span class="ix">#${fi}</span>${tm} TRD ${d} ${px(e[2])}×${e[3]} a=${e[4]} b=${e[5]}`;
+  }
+  return `<span class="ix">#${fi}</span>${tm} ?`;
+}
+
+function findPos(list, fi){
+  // 二分找 list 中等于 fi 的下标；若不在该流则找最后一个 <= fi
+  let lo=0, hi=list.length-1, best=-1;
+  while(lo<=hi){
+    const mid=(lo+hi)>>1;
+    if(list[mid]===fi) return mid;
+    if(list[mid]<fi){ best=mid; lo=mid+1; }
+    else hi=mid-1;
+  }
+  return best;
+}
+
+function windowSlice(list, pos, win){
+  if(!list.length) return {start:0, end:0, cur:-1};
+  if(pos<0) return {start:0, end:Math.min(win, list.length), cur:-1};
+  let start = Math.max(0, pos - Math.floor((win-1)/2));
+  let end = start + win;
+  if(end > list.length){ end = list.length; start = Math.max(0, end - win); }
+  return {start, end, cur: pos};
+}
+
+function renderOneStream(elId, list, fi){
+  const el=document.getElementById(elId);
+  if(!list.length){
+    el.innerHTML='<div class="empty">（无事件）</div>';
+    return;
+  }
+  const pos=findPos(list, fi);
+  const exact = (pos>=0 && list[pos]===fi);
+  const w=windowSlice(list, pos, STREAM_WIN);
+  const parts=[];
+  for(let k=w.start; k<w.end; k++){
+    const fii=list[k];
+    const isCur = exact && k===pos;
+    parts.push(`<div class="item${isCur?' cur':''}" data-fi="${fii}" title="跳转到 #${fii}">${shortLine(fii)}</div>`);
+  }
+  el.innerHTML=parts.join('');
+  const curEl=el.querySelector('.item.cur');
+  if(curEl) curEl.scrollIntoView({block:'nearest'});
+}
+
+function renderStreams(fi){
+  renderOneStream('listOrder', orderIdx, fi);
+  renderOneStream('listTrade', tradeIdx, fi);
+  renderOneStream('listMerged', mergedIdx, fi);
+}
+
+document.querySelector('.streams').addEventListener('click', ev=>{
+  const item=ev.target.closest('.item');
+  if(!item) return;
+  const fi=parseInt(item.getAttribute('data-fi'),10);
+  if(!isNaN(fi)){ stop(); show(fi, true); }
+});
+
+function maxVol(f){
+  let m=1;
+  for(let i=0;i<DEPTH;i++){ m=Math.max(m,f.askv[i]||0,f.bidv[i]||0); }
+  return m;
+}
+
+function levelChanged(prevF, f, side, i){
+  if(!prevF) return false;
+  if(side==='ask') return (prevF.askp[i]||0)!==(f.askp[i]||0) || (prevF.askv[i]||0)!==(f.askv[i]||0);
+  return (prevF.bidp[i]||0)!==(f.bidp[i]||0) || (prevF.bidv[i]||0)!==(f.bidv[i]||0);
+}
+
+function findPriceLevel(prices, vols, price){
+  if(!price) return null;
+  for(let i=0;i<DEPTH;i++){
+    if((prices[i]||0)===price) return {i:i, v:vols[i]||0};
+  }
+  return null;
+}
+
+function collectDeltas(prevF, f){
+  const lines=[];
+  if(!prevF) return lines;
+  for(let i=0;i<DEPTH;i++){
+    const op=prevF.askp[i]||0, ov=prevF.askv[i]||0, np=f.askp[i]||0, nv=f.askv[i]||0;
+    if(op===np && ov===nv) continue;
+    if(op!==np && ov!==nv) lines.push({side:'ask', i, html:`Ask${i+1}: ${px(op)}×${fv(ov)} → <b>${px(np)}×${fv(nv)}</b>`});
+    else if(op!==np) lines.push({side:'ask', i, html:`Ask${i+1} 价格: ${px(op)} → <b>${px(np)}</b>（量 ${fv(nv)}）`});
+    else {
+      const d=nv-ov;
+      const cls=d>0?'up':'dn';
+      lines.push({side:'ask', i, html:`Ask${i+1} ${px(np)} 量: ${fv(ov)} → <b>${fv(nv)}</b> <span class="${cls}">(${signed(d)})</span>`});
+    }
+  }
+  for(let i=0;i<DEPTH;i++){
+    const op=prevF.bidp[i]||0, ov=prevF.bidv[i]||0, np=f.bidp[i]||0, nv=f.bidv[i]||0;
+    if(op===np && ov===nv) continue;
+    if(op!==np && ov!==nv) lines.push({side:'bid', i, html:`Bid${i+1}: ${px(op)}×${fv(ov)} → <b>${px(np)}×${fv(nv)}</b>`});
+    else if(op!==np) lines.push({side:'bid', i, html:`Bid${i+1} 价格: ${px(op)} → <b>${px(np)}</b>（量 ${fv(nv)}）`});
+    else {
+      const d=nv-ov;
+      const cls=d>0?'up':'dn';
+      lines.push({side:'bid', i, html:`Bid${i+1} ${px(np)} 量: ${fv(ov)} → <b>${fv(nv)}</b> <span class="${cls}">(${signed(d)})</span>`});
+    }
+  }
+  return lines;
+}
+
+function explainEvent(prevF, f){
+  const stories=[];
+  const e=f.e;
+  const type=e[0];
+
+  if(type===3 || !prevF){
+    stories.push('连续竞价开始前的基准 15 档（集合竞价撮合后剩余挂单）。');
+    return stories;
+  }
+
+  const a1p=prevF.askp[0]||0, a1v=prevF.askv[0]||0;
+  const b1p=prevF.bidp[0]||0, b1v=prevF.bidv[0]||0;
+  const na1p=f.askp[0]||0, na1v=f.askv[0]||0;
+  const nb1p=f.bidp[0]||0, nb1v=f.bidv[0]||0;
+
+  if(type===0){
+    // ORDER: [0, dir, oid, otype, price, vol]
+    const buy=e[1]===1, sell=e[1]===2;
+    const otype={1:'市价',2:'限价',3:'本方最优'}[e[3]]||String(e[3]);
+    const price=e[4], vol=e[5], oid=e[2];
+    const side=buy?'买':'卖';
+    stories.push(`新${side}委托进入：${otype} ${px(price)}×${fv(vol)}（OrderID=${oid}）。`);
+
+    if(buy){
+      if(otype==='市价' || (a1p && price>=a1p)){
+        stories.push(`价格 ${px(price)} ≥ 当时卖一 ${px(a1p)}×${fv(a1v)}：属于可成交/越价买入，簿上可能先短暂显示为更优买一，随后通常立刻被 TRADE 吃掉卖盘。`);
+      } else if(b1p && price>b1p){
+        stories.push(`价格高于原买一 ${px(b1p)}：改善买一。Bid1 ${px(b1p)}×${fv(b1v)} → ${px(nb1p)}×${fv(nb1v)}。`);
+      } else if(b1p && price===b1p){
+        stories.push(`价格等于买一：加深 Bid1 挂单量（${fv(b1v)} → ${fv(nb1v)}，Δ ${signed(nb1v-b1v)}）。`);
+      } else {
+        const hit=findPriceLevel(f.bidp, f.bidv, price);
+        if(hit){
+          const ph=findPriceLevel(prevF.bidp, prevF.bidv, price);
+          const before=ph?ph.v:0;
+          stories.push(`挂在买盘第 ${hit.i+1} 档 ${px(price)}：该档量 ${fv(before)} → ${fv(hit.v)}（Δ ${signed(hit.v-before)}）。`);
+        } else {
+          stories.push(`挂单价 ${px(price)} 低于 15 档可见买盘（或未进入前 15 档），盘口表面可能几乎不变。`);
+        }
+      }
+    } else if(sell){
+      if(otype==='市价' || (b1p && price && price<=b1p)){
+        stories.push(`价格 ${px(price)} ≤ 当时买一 ${px(b1p)}×${fv(b1v)}：属于可成交/越价卖出，卖单可能先改写卖一，随后通常立刻 TRADE 扣减买盘。`);
+      } else if(a1p && price<a1p){
+        stories.push(`价格低于原卖一 ${px(a1p)}：改善卖一。Ask1 ${px(a1p)}×${fv(a1v)} → ${px(na1p)}×${fv(na1v)}。`);
+      } else if(a1p && price===a1p){
+        stories.push(`价格等于卖一：加深 Ask1 挂单量（${fv(a1v)} → ${fv(na1v)}，Δ ${signed(na1v-a1v)}）。`);
+      } else {
+        const hit=findPriceLevel(f.askp, f.askv, price);
+        if(hit){
+          const ph=findPriceLevel(prevF.askp, prevF.askv, price);
+          const before=ph?ph.v:0;
+          stories.push(`挂在卖盘第 ${hit.i+1} 档 ${px(price)}：该档量 ${fv(before)} → ${fv(hit.v)}（Δ ${signed(hit.v-before)}）。`);
+        } else {
+          stories.push(`挂单价 ${px(price)} 高于 15 档可见卖盘（或未进入前 15 档），盘口表面可能几乎不变。`);
+        }
+      }
+    }
+  } else if(type===1){
+    // TRADE: [1, dir, price, vol, askoid, bidoid]
+    const buy=e[1]===1;
+    const price=e[2], vol=e[3], askOID=e[4], bidOID=e[5];
+    if(buy){
+      stories.push(`主动买成交：以 ${px(price)} 成交 ${fv(vol)} 股，消耗卖方订单 askOID=${askOID}（对手 bidOID=${bidOID}）。`);
+      stories.push(`卖盘对应价位挂单量减少；若卖一被打穿，Ask1 上移到下一档。Ask1: ${px(a1p)}×${fv(a1v)} → ${px(na1p)}×${fv(na1v)}。`);
+    } else {
+      stories.push(`主动卖成交：以 ${px(price)} 成交 ${fv(vol)} 股，消耗买方订单 bidOID=${bidOID}（对手 askOID=${askOID}）。`);
+      stories.push(`买盘对应价位挂单量减少；若买一被打穿，Bid1 下移到下一档。Bid1: ${px(b1p)}×${fv(b1v)} → ${px(nb1p)}×${fv(nb1v)}。`);
+    }
+    const dVol=(f.totVol||0)-(prevF.totVol||0);
+    const dLast=(f.last||0)-(prevF.last||0);
+    stories.push(`成交后 Last ${px(prevF.last)} → ${px(f.last)}${dLast?`（${dLast>0?'↑':'↓'}${px(Math.abs(dLast))}）`:''}；TotVol ${fv(prevF.totVol)} → ${fv(f.totVol)}（Δ ${signed(dVol)}）。`);
+  } else if(type===2){
+    // CANCEL: [2, vol, askoid, bidoid]
+    const vol=e[1], askOID=e[2], bidOID=e[3];
+    if(askOID && !bidOID){
+      stories.push(`卖方撤单确认：askOID=${askOID} 减少/移除 ${fv(vol)} 股。`);
+    } else if(bidOID && !askOID){
+      stories.push(`买方撤单确认：bidOID=${bidOID} 减少/移除 ${fv(vol)} 股。`);
+    } else {
+      stories.push(`撤单确认：vol=${fv(vol)}，askOID=${askOID}，bidOID=${bidOID}。`);
+    }
+    if(a1p===na1p && a1v===na1v && b1p===nb1p && b1v===nb1v){
+      stories.push('最优一档未变：被撤订单多半不在买一/卖一（可能在更深档，或已不在 15 档展示范围内）。');
+    } else {
+      stories.push(`最优档变化：Ask1 ${px(a1p)}×${fv(a1v)} → ${px(na1p)}×${fv(na1v)}；Bid1 ${px(b1p)}×${fv(b1v)} → ${px(nb1p)}×${fv(nb1v)}。`);
+    }
+  }
+
+  // spread / best quote wrap-up
+  const spr0=(a1p&&b1p)?(a1p-b1p)/10000:null;
+  const spr1=(na1p&&nb1p)?(na1p-nb1p)/10000:null;
+  if(spr0!=null && spr1!=null && Math.abs(spr0-spr1)>1e-9){
+    stories.push(`买卖价差 Spread：${spr0.toFixed(2)} → ${spr1.toFixed(2)}。`);
+  }
+
+  return stories;
+}
+
+function renderImpact(prevF, f){
+  const stories=explainEvent(prevF, f);
+  const deltas=collectDeltas(prevF, f);
+  const storyHtml = stories.length
+    ? `<ul class="story">${stories.map(s=>`<li>${s}</li>`).join('')}</ul>`
+    : `<div class="empty">（无额外说明）</div>`;
+  document.getElementById('impactBody').innerHTML =
+    storyHtml +
+    (deltas.length?`<div class="deltas neu">本步共改动 ${deltas.length} 处盘口价/量（详见右侧）。</div>`:
+      `<div class="empty">15 档价量相对上一事件无变化（事件可能作用在更深档，或仅改写非展示字段）。</div>`);
+  document.getElementById('impactBody').scrollTop = 0;
+
+  if(!prevF){
+    document.getElementById('deltaBox').innerHTML='<span class="neu">基准帧：无上一状态可比。</span>';
+    document.getElementById('deltaBox').scrollTop = 0;
+    return;
+  }
+  if(!deltas.length){
+    document.getElementById('deltaBox').innerHTML='<span class="neu">Ask1–15 / Bid1–15 均未变化。</span>';
+    document.getElementById('deltaBox').scrollTop = 0;
+    return;
+  }
+  document.getElementById('deltaBox').innerHTML = deltas.map(d=>d.html).join('<br>');
+  document.getElementById('deltaBox').scrollTop = 0;
+}
+
+function render(f, prevF, doFlash){
+  const mx=maxVol(f);
+  const parts=[];
+  const matchCls = f.match ? ' hit-match' : '';
+  for(let i=DEPTH-1;i>=0;i--){
+    const v=f.askv[i]||0, p=f.askp[i]||0;
+    const w=Math.min(100,100*v/mx);
+    let flash='';
+    if(doFlash && prevF){
+      const pv=prevF.askv[i]||0;
+      if(v!==pv) flash=v>pv?' flash-up':' flash-dn';
+    }
+    const ch=levelChanged(prevF,f,'ask',i)?' changed':'';
+    // 官方比对前 VERIFY_DEPTH 档：命中时仅这些档的价量标绿
+    const hit = (f.match && i < VERIFY_DEPTH) ? matchCls : '';
+    parts.push(`<div class="row ask${ch}"><div class="lab">Ask${i+1}</div><div class="px${hit}">${px(p)}</div><div class="bar-track"><div class="bar ask${flash}" style="width:${w}%"></div></div><div class="vol${hit}">${fv(v)}</div></div>`);
+  }
+  const spr=(f.askp[0]&&f.bidp[0])?((f.askp[0]-f.bidp[0])/10000).toFixed(2):'—';
+  parts.push(`<div class="midline"><span>Spread</span><strong>${spr}</strong><span>Last ${px(f.last)}</span></div>`);
+  for(let i=0;i<DEPTH;i++){
+    const v=f.bidv[i]||0, p=f.bidp[i]||0;
+    const w=Math.min(100,100*v/mx);
+    let flash='';
+    if(doFlash && prevF){
+      const pv=prevF.bidv[i]||0;
+      if(v!==pv) flash=v>pv?' flash-up':' flash-dn';
+    }
+    const ch=levelChanged(prevF,f,'bid',i)?' changed':'';
+    const hit = (f.match && i < VERIFY_DEPTH) ? matchCls : '';
+    parts.push(`<div class="row bid${ch}"><div class="lab">Bid${i+1}</div><div class="px${hit}">${px(p)}</div><div class="bar-track"><div class="bar bid${flash}" style="width:${w}%"></div></div><div class="vol${hit}">${fv(v)}</div></div>`);
+  }
+  document.getElementById('ladder').innerHTML=parts.join('');
+}
+
+function show(i, flash){
+  idx=Math.max(0,Math.min(frames.length-1,i));
+  const f=frames[idx];
+  const prevF = idx>0 ? frames[idx-1] : null;
+  render(f, prevF, flash);
+  renderImpact(prevF, f);
+  prevSnap=f;
+
+  const ev=fmtEvent(f.e);
+  const hitTag=f.match?`<span class="tag tag-hit">OFFICIAL HIT</span>`:'';
+  document.getElementById('eventBox').innerHTML=`<span class="tag ${ev.tag}">${ev.tag.replace('tag-','').toUpperCase()}</span>${hitTag}${ev.text}`;
+
+  const spr=(f.askp[0]&&f.bidp[0])?((f.askp[0]-f.bidp[0])/10000).toFixed(2):'—';
+  document.getElementById('mIdx').textContent=(idx===0?'BASE':'#'+idx)+'  '+tstr(f.nTime);
+  document.getElementById('mLast').textContent=px(f.last);
+  document.getElementById('mVol').textContent=fv(f.totVol);
+  document.getElementById('mSpr').textContent=spr;
+  let passed=0; for(const h of hitIdx) if(h<=idx) passed++;
+  document.getElementById('mHit').textContent =
+    f.match
+      ? `${passed} / ${hitIdx.length} · 官方 ${tstr(f.match)}`
+      : `${passed} / ${hitIdx.length}`;
+
+  document.getElementById('slider').value=String(idx);
+  document.getElementById('prog').textContent=idx+' / '+(frames.length-1);
+  document.getElementById('btnPrev').disabled=idx<=0;
+  document.getElementById('btnNext').disabled=idx>=frames.length-1;
+  renderStreams(idx);
+  document.querySelectorAll('#tourBar button[data-step]').forEach(btn=>{
+    btn.classList.toggle('on', String(btn.getAttribute('data-step')) === String(idx));
+  });
+  try {
+    const u = new URL(location.href);
+    if (idx > 0) u.searchParams.set('step', String(idx));
+    else u.searchParams.delete('step');
+    history.replaceState(null, '', u.pathname + u.search + u.hash);
+  } catch (_) {}
+}
+
+function stop(){ playing=false; if(timer){clearTimeout(timer);timer=null;} document.getElementById('btnPlay').textContent='播放'; }
+function schedule(){
+  if(!playing) return;
+  if(idx>=frames.length-1){ stop(); return; }
+  const next=idx+1;
+  show(next,true);
+  if(!playing) return;
+  if(idx>=frames.length-1){ stop(); return; }
+  const sp=parseFloat(document.getElementById('speed').value)||1;
+  // 命中官方：停留 3 秒后继续；否则按速度步进
+  const delay = frames[next].match ? HIT_PAUSE_MS : Math.max(8, 120/sp);
+  timer=setTimeout(schedule, delay);
+}
+function play(){
+  if(idx>=frames.length-1) show(0,false);
+  playing=true; document.getElementById('btnPlay').textContent='暂停';
+  schedule();
+}
+function nextHit(){
+  stop();
+  for(const h of hitIdx){ if(h>idx){ show(h,true); return; } }
+}
+
+document.getElementById('btnPlay').onclick=()=>{ if(playing) stop(); else play(); };
+document.getElementById('btnPrev').onclick=()=>{ stop(); show(idx-1,true); };
+document.getElementById('btnNext').onclick=()=>{ stop(); show(idx+1,true); };
+document.getElementById('btnNextHit').onclick=nextHit;
+document.getElementById('btnReset').onclick=()=>{ stop(); show(0,false); };
+document.getElementById('slider').oninput=e=>{ stop(); show(parseInt(e.target.value,10),true); };
+
+window.addEventListener('keydown',e=>{
+  if(e.target && (e.target.tagName==='INPUT'||e.target.tagName==='SELECT')) return;
+  if(e.code==='Space'){ e.preventDefault(); if(playing) stop(); else play(); }
+  if(e.code==='ArrowLeft'){ e.preventDefault(); stop(); show(idx-1,true); }
+  if(e.code==='ArrowRight'){ e.preventDefault(); stop(); show(idx+1,true); }
+  if(e.code==='KeyN'){ e.preventDefault(); nextHit(); }
+  if(e.code==='Home'){ e.preventDefault(); stop(); show(0,false); }
+});
+
+document.getElementById('tourBar').addEventListener('click', ev=>{
+  const btn = ev.target.closest('button[data-step]');
+  if (!btn) return;
+  stop();
+  show(parseInt(btn.getAttribute('data-step'), 10) || 0, true);
+});
+
+let startIdx = 0;
+try {
+  const q = new URLSearchParams(location.search);
+  const s = parseInt(q.get('step') || q.get('i') || '0', 10);
+  if (!isNaN(s) && s >= 0) startIdx = s;
+} catch (_) {}
+show(startIdx, false);
+})();
+</script>
+</body>
+</html>

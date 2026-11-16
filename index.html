@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<title>开盘一分钟 · 看见沪深撮合</title>
+<style>
+:root {
+  --bg0: #0b1016;
+  --bg1: #121a24;
+  --line: #2a3544;
+  --text: #e8eef6;
+  --muted: #8b9bb0;
+  --sz: #3ecf8e;
+  --sz-dim: rgba(62, 207, 142, 0.14);
+  --sh: #5b9fd4;
+  --sh-dim: rgba(91, 159, 212, 0.14);
+  --warn: #f0c14b;
+  --card: #151e2a;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  font-family: "PingFang SC", "Noto Sans SC", "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(900px 420px at 10% -10%, rgba(62, 207, 142, 0.16), transparent 55%),
+    radial-gradient(800px 380px at 95% 0%, rgba(91, 159, 212, 0.18), transparent 50%),
+    linear-gradient(180deg, #0d141c 0%, var(--bg0) 40%, #0a0e13 100%);
+}
+.wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 28px 18px 48px;
+}
+.brand {
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--warn);
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+h1 {
+  margin: 0 0 10px;
+  font-size: clamp(26px, 6vw, 34px);
+  line-height: 1.25;
+  font-weight: 700;
+}
+.lead {
+  margin: 0 0 22px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.65;
+}
+.lead strong { color: var(--text); font-weight: 600; }
+
+.how {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+}
+.how h2 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--warn);
+  letter-spacing: 0.04em;
+}
+.how ol {
+  margin: 0;
+  padding-left: 18px;
+  color: #c5d0dc;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.how li { margin: 0 0 4px; }
+.how li:last-child { margin-bottom: 0; }
+
+.cards {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px 18px 16px;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.card:active { transform: scale(0.99); }
+.card.sz { border-color: rgba(62, 207, 142, 0.35); box-shadow: inset 0 0 0 1px rgba(62, 207, 142, 0.08); }
+.card.sh { border-color: rgba(91, 159, 212, 0.35); box-shadow: inset 0 0 0 1px rgba(91, 159, 212, 0.08); }
+.card .mkt {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+.card.sz .mkt { background: var(--sz-dim); color: var(--sz); }
+.card.sh .mkt { background: var(--sh-dim); color: var(--sh); }
+.card h3 {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 700;
+}
+.card p {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.card .meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  font-size: 12px;
+  color: #9aa8b8;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 14px;
+}
+.card .cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.card.sz .cta { color: var(--sz); }
+.card.sh .cta { color: var(--sh); }
+
+.tour {
+  background: var(--bg1);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+.tour h2 {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.tour .sub {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: #1a2433;
+  color: var(--text);
+  border-radius: 999px;
+  padding: 7px 11px;
+  font-size: 12px;
+  text-decoration: none;
+  line-height: 1.2;
+}
+.chip:active { opacity: 0.85; }
+.tour.sz .chip { border-color: rgba(62, 207, 142, 0.28); }
+.tour.sh .chip { border-color: rgba(91, 159, 212, 0.28); }
+.chip b { font-weight: 700; }
+.chip span { color: var(--muted); margin-left: 4px; }
+
+.compare {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  overflow-x: auto;
+}
+.compare h2 {
+  margin: 0 0 10px;
+  font-size: 14px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  min-width: 480px;
+}
+th, td {
+  text-align: left;
+  padding: 8px 8px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+  line-height: 1.45;
+}
+th { color: var(--muted); font-weight: 600; font-size: 11px; }
+td.szc { color: #9dffc5; }
+td.shc { color: #9ec8ef; }
+
+.note {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+  margin: 0;
+}
+.note code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  background: #1a2433;
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: var(--warn);
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">Level-2 · Open 1 Minute</div>
+    <h1>开盘一分钟，看见沪深撮合</h1>
+    <p class="lead">
+      同一套 Tick / Order / Transaction 表头，<strong>差别在语义</strong>：撤单写在哪张表、成交怎么扣簿、市价单写不写全。
+      下面两页可点「下一步」回放真实事件流；先选市场，或直接跳到关键帧。
+    </p>
+
+    <div class="how">
+      <h2>手机上怎么玩</h2>
+      <ol>
+        <li>点下方入口进入动画页（建议横屏，或用电脑打开）。</li>
+        <li>先按「下一步」慢慢看；熟悉后用「播放」+ 5× / 10×。</li>
+        <li>想验证重建是否对：点「下一命中」——前 10 档变绿并停 3 秒。</li>
+      </ol>
+    </div>
+
+    <div class="cards">
+      <a class="card sz" href="case_open1m_000001_lob15_anim.html">
+        <div class="mkt">SHENZHEN · SZ</div>
+        <h3>000001.SZ 平安银行</h3>
+        <p>深市样本：成交双边扣减；撤单在 Transaction（FunctionCode=C）；可见市价单。</p>
+        <div class="meta">
+          <span>20260731</span>
+          <span>13,540 事件</span>
+          <span>命中官方 20/20</span>
+        </div>
+        <div class="cta">进入深市动画 →</div>
+      </a>
+
+      <a class="card sh" href="case_open1m_603778_lob15_anim.html">
+        <div class="mkt">SHANGHAI · SH</div>
+        <h3>603778.SH 乾景园林</h3>
+        <p>沪市样本：连续竞价主扣对手方；撤单在 Order（BSFlag=C）；本套 Type 几乎全是限价。</p>
+        <div class="meta">
+          <span>20261111</span>
+          <span>4,578 事件</span>
+          <span>命中官方 20/20</span>
+        </div>
+        <div class="cta">进入沪市动画 →</div>
+      </a>
+    </div>
+
+    <div class="tour sz">
+      <h2>深市导览 · 同一开盘秒</h2>
+      <p class="sub">建议按顺序点；每帧打开后可用「上一步 / 下一步」微调。</p>
+      <div class="chips">
+        <a class="chip" href="case_open1m_000001_lob15_anim.html?step=0"><b>#0</b><span>开盘前盘口</span></a>
+        <a class="chip" href="case_open1m_000001_lob15_anim.html?step=1"><b>#1</b><span>卖单改善卖一</span></a>
+        <a class="chip" href="case_open1m_000001_lob15_anim.html?step=2"><b>#2</b><span>立刻成交扣簿</span></a>
+        <a class="chip" href="case_open1m_000001_lob15_anim.html?step=10"><b>#10</b><span>市价卖单</span></a>
+        <a class="chip" href="case_open1m_000001_lob15_anim.html?step=103"><b>#103</b><span>撤单改写卖一</span></a>
+        <a class="chip" href="case_open1m_000001_lob15_anim.html?step=666"><b>#666</b><span>命中官方快照</span></a>
+      </div>
+    </div>
+
+    <div class="tour sh">
+      <h2>沪市导览 · 对照同一镜头</h2>
+      <p class="sub">注意第 1 帧就是撤单——沪市撤单落在 Order，页面里记成 CANCEL。</p>
+      <div class="chips">
+        <a class="chip" href="case_open1m_603778_lob15_anim.html?step=0"><b>#0</b><span>开盘前盘口</span></a>
+        <a class="chip" href="case_open1m_603778_lob15_anim.html?step=1"><b>#1</b><span>开盘即撤单</span></a>
+        <a class="chip" href="case_open1m_603778_lob15_anim.html?step=2"><b>#2</b><span>卖单改善卖一</span></a>
+        <a class="chip" href="case_open1m_603778_lob15_anim.html?step=6"><b>#6</b><span>成交并命中官方</span></a>
+        <a class="chip" href="case_open1m_603778_lob15_anim.html?step=1498"><b>#1498</b><span>撤单砍掉卖一量</span></a>
+      </div>
+    </div>
+
+    <div class="compare">
+      <h2>一眼对照</h2>
+      <table>
+        <thead>
+          <tr><th>镜头</th><th>深圳 000001</th><th>上海 603778</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>撤单落点</td>
+            <td class="szc">Transaction 的 C</td>
+            <td class="shc">Order 的 C</td>
+          </tr>
+          <tr>
+            <td>成交扣簿</td>
+            <td class="szc">买卖双方 OrderID 都扣</td>
+            <td class="shc">连续竞价主扣对手方</td>
+          </tr>
+          <tr>
+            <td>委托类型</td>
+            <td class="szc">限价 / 市价都有</td>
+            <td class="shc">本套文件几乎全是限价</td>
+          </tr>
+          <tr>
+            <td>验证方式</td>
+            <td class="szc" colspan="2" style="color:#c5d0dc">重建前 10 档曾出现在官方 3 秒快照集合即命中（标绿停 3 秒）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="note">
+      两市样本交易日不同（深 <code>20260731</code> / 沪 <code>20261111</code>），用来对照<strong>规则</strong>而非同一时刻行情。
+      部署时请保持本页与两个 <code>*_anim.html</code>、<code>*_data.js</code> 同目录；公众号「阅读原文」指向本页即可。
+    </p>
+  </div>
+</body>
+</html>
