@@ -18,9 +18,10 @@ export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
 REPO_NAME="${REPO_NAME:-lob-open1m-wechat}"
 SITE_URL="https://${GH_USER}.github.io/${REPO_NAME}/"
 
+export PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
 if ! command -v gh >/dev/null 2>&1; then
-  echo "未找到 gh，正在用 Homebrew 安装…"
-  brew install gh
+  echo "未找到 gh。请先安装：https://cli.github.com/ 或把 gh 放到 ~/.local/bin"
+  exit 1
 fi
 
 if ! gh auth status >/dev/null 2>&1; then
